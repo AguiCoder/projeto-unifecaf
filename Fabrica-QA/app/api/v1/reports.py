@@ -18,7 +18,7 @@ def get_final_report(
     - Total de peças aprovadas
     - Total de peças reprovadas
     - Contagem de reprovações por motivo
-    - Total de caixas fechadas utilizadas
+    - Total de caixas utilizadas (abertas e fechadas)
     """
     return generate_final_report(session)
 

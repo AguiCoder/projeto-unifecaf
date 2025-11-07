@@ -40,9 +40,9 @@ def generate_final_report(session: Session) -> FinalReportResponse:
         for motivo, quantidade in motivo_counter.items()
     ]
     
-    # Conta caixas fechadas
-    statement_closed_boxes = select(func.count(Box.id)).where(Box.status == BoxStatus.CLOSED)
-    total_caixas = session.exec(statement_closed_boxes).one() or 0
+    # Conta todas as caixas utilizadas (abertas e fechadas)
+    statement_all_boxes = select(func.count(Box.id))
+    total_caixas = session.exec(statement_all_boxes).one() or 0
     
     return FinalReportResponse(
         total_aprovadas=total_aprovadas,

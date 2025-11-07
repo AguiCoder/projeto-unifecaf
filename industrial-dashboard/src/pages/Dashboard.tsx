@@ -91,7 +91,7 @@ const Dashboard = () => {
             {/* Total Boxes Card */}
             <div className="mt-6">
               <MetricCard
-                title="Caixas Completas"
+                title="Caixas Utilizadas"
                 value={report?.total_caixas || 0}
                 icon={<Package />}
                 color="muted"

@@ -75,7 +75,7 @@ const Reports = () => {
             color="danger"
           />
           <MetricCard
-            title="Caixas Completas"
+            title="Caixas Utilizadas"
             value={report?.total_caixas || 0}
             icon={<Package />}
             color="muted"

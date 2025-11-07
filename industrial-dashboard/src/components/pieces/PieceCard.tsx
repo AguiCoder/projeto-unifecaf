@@ -1,7 +1,21 @@
-import { Piece } from '../../types';
+import { useState } from 'react';
+import { Piece, PieceStatus } from '../../types';
 import { StatusBadge } from '../common/StatusBadge';
-import { Package, Scale, Ruler } from 'lucide-react';
+import { Package, Scale, Ruler, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { Button } from '../ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
+import { useDeletePiece } from '../../hooks/usePieces';
+import { useToast } from '../../hooks/use-toast';
 
 interface PieceCardProps {
   piece: Piece;
@@ -9,25 +23,63 @@ interface PieceCardProps {
 }
 
 export const PieceCard = ({ piece, onClick }: PieceCardProps) => {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const deletePiece = useDeletePiece();
+  const { toast } = useToast();
+
   const colorMap: Record<string, string> = {
     azul: 'Azul',
     verde: 'Verde',
   };
 
+  const handleDelete = async () => {
+    try {
+      await deletePiece.mutateAsync(piece.id);
+      toast({
+        title: 'Peça removida',
+        description: `A peça ${piece.id} foi removida com sucesso.`,
+      });
+      setShowDeleteDialog(false);
+    } catch (error) {
+      toast({
+        title: 'Erro ao remover peça',
+        description: (error as Error).message || 'Ocorreu um erro ao tentar remover a peça.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowDeleteDialog(true);
+  };
+
   return (
-    <div
-      onClick={onClick}
-      className={`p-4 rounded-lg border-2 border-border bg-card hover:shadow-lg transition-all cursor-pointer ${
-        onClick ? 'hover:border-primary/50' : ''
-      }`}
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Package className="w-5 h-5 text-primary" />
-          <span className="font-bold text-lg text-foreground">{piece.id}</span>
+    <>
+      <div
+        onClick={onClick}
+        className={`p-4 rounded-lg border-2 border-border bg-card hover:shadow-lg transition-all cursor-pointer ${
+          onClick ? 'hover:border-primary/50' : ''
+        }`}
+      >
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Package className="w-5 h-5 text-primary" />
+            <span className="font-bold text-lg text-foreground">{piece.id}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <StatusBadge status={piece.status} size="sm" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+              onClick={handleDeleteClick}
+              disabled={deletePiece.isPending}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-        <StatusBadge status={piece.status} size="sm" />
-      </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-sm">
@@ -64,5 +116,32 @@ export const PieceCard = ({ piece, onClick }: PieceCardProps) => {
         </div>
       </div>
     </div>
+
+    <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Confirmar remoção</AlertDialogTitle>
+          <AlertDialogDescription>
+            Tem certeza que deseja remover a peça <strong>{piece.id}</strong>? Esta ação não pode ser desfeita.
+            {piece.status === PieceStatus.APPROVED && piece.box_id && (
+              <span className="block mt-2 text-sm">
+                A peça será removida da caixa {piece.box_id}.
+              </span>
+            )}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleDelete}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            disabled={deletePiece.isPending}
+          >
+            {deletePiece.isPending ? 'Removendo...' : 'Remover'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 };

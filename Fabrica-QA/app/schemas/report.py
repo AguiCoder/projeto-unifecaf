@@ -16,7 +16,7 @@ class FinalReportResponse(BaseModel):
         default_factory=list,
         description="Contagem de reprovações por motivo"
     )
-    total_caixas: int = Field(..., description="Total de caixas fechadas utilizadas")
+    total_caixas: int = Field(..., description="Total de caixas utilizadas (abertas e fechadas)")
     
     class Config:
         json_schema_extra = {
