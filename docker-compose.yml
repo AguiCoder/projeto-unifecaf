@@ -10,8 +10,7 @@ services:
       POSTGRES_DB: fabrica_qa
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # Removido ports - Coolify/Traefik gerencia o acesso
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -28,8 +27,9 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/fabrica_qa
       APP_NAME: Fabrica QA
-    ports:
-      - "8000:8000"
+    # Removido ports - Coolify/Traefik gerencia o acesso
+    expose:
+      - "8000"  # Expõe a porta apenas na rede interna
     depends_on:
       db:
         condition: service_healthy
@@ -49,8 +49,9 @@ services:
       args:
         VITE_API_URL: http://localhost:8000
     container_name: fabrica_qa_frontend
-    ports:
-      - "8080:8080"
+    # Removido ports - Coolify/Traefik gerencia o acesso
+    expose:
+      - "8080"  # Expõe a porta apenas na rede interna
     depends_on:
       - backend
     networks:
@@ -62,4 +63,3 @@ networks:
 
 volumes:
   postgres_data:
-
