@@ -1,0 +1,35 @@
+# Ambiente virtual
+.venv/
+venv/
+
+# Arquivos compilados Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Banco local SQLite
+*.db
+
+# Arquivos temporários e logs
+*.log
+*.tmp
+
+# Configurações do sistema / IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Cache do pip
+pip-wheel-metadata/
+*.egg-info/
+.eggs/
+
+# Docker
+*.pid
+*.tar
+.env
+
+# Build / dist
+build/
+dist/

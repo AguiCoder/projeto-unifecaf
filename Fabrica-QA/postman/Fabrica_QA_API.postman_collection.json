@@ -1,0 +1,863 @@
+{
+	"info": {
+		"_postman_id": "fabrica-qa-api-collection",
+		"name": "Fabrica QA API",
+		"description": "Coleção completa da API Fabrica QA - Sistema de Controle de Produção e Qualidade de Peças",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "fabrica-qa"
+	},
+	"item": [
+		{
+			"name": "Geral",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Endpoint de health check para verificar se a API está funcionando."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/health",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"ok\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Root - Informações da API",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Endpoint raiz que retorna informações sobre a API."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"API Fabrica QA - Sistema de Controle de Produção e Qualidade\",\n    \"docs\": \"/docs\",\n    \"redoc\": \"/redoc\",\n    \"version\": \"1.0.0\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints gerais da API"
+		},
+		{
+			"name": "Peças",
+			"item": [
+				{
+					"name": "Cadastrar Nova Peça",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"P001\",\n    \"peso\": 100.0,\n    \"cor\": \"azul\",\n    \"comprimento\": 15.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/pieces",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"pieces"
+							]
+						},
+						"description": "Cadastra uma nova peça e avalia automaticamente sua qualidade.\n\n- Se aprovada: aloca em uma caixa (cria nova se necessário)\n- Se reprovada: armazena os motivos de reprovação\n\n**Critérios de Aprovação:**\n- Peso entre 95g e 105g\n- Cor azul ou verde\n- Comprimento entre 10cm e 20cm"
+					},
+					"response": [
+						{
+							"name": "Peça Aprovada",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"P001\",\n    \"peso\": 100.0,\n    \"cor\": \"azul\",\n    \"comprimento\": 15.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/pieces",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"pieces"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"P001\",\n    \"peso\": 100.0,\n    \"cor\": \"azul\",\n    \"comprimento\": 15.0,\n    \"status\": \"approved\",\n    \"rejection_reasons\": [],\n    \"box_id\": 1,\n    \"created_at\": \"2024-01-01T12:00:00\"\n}"
+						},
+						{
+							"name": "Peça Reprovada",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"P002\",\n    \"peso\": 90.0,\n    \"cor\": \"vermelho\",\n    \"comprimento\": 25.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/pieces",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"pieces"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"P002\",\n    \"peso\": 90.0,\n    \"cor\": \"vermelho\",\n    \"comprimento\": 25.0,\n    \"status\": \"rejected\",\n    \"rejection_reasons\": [\n        \"peso fora da faixa\",\n        \"cor inválida\",\n        \"comprimento fora da faixa\"\n    ],\n    \"box_id\": null,\n    \"created_at\": \"2024-01-01T12:05:00\"\n}"
+						},
+						{
+							"name": "Erro - Peça já existe",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"P001\",\n    \"peso\": 100.0,\n    \"cor\": \"azul\",\n    \"comprimento\": 15.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/pieces",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"pieces"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"detail\": \"Peça com ID 'P001' já existe\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Listar Todas as Peças",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/pieces",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"pieces"
+							]
+						},
+						"description": "Lista todas as peças cadastradas sem filtros."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/pieces",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"pieces"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"items\": [\n        {\n            \"id\": \"P001\",\n            \"peso\": 100.0,\n            \"cor\": \"azul\",\n            \"comprimento\": 15.0,\n            \"status\": \"approved\",\n            \"rejection_reasons\": [],\n            \"box_id\": 1,\n            \"created_at\": \"2024-01-01T12:00:00\"\n        }\n    ],\n    \"total\": 1,\n    \"limit\": 100,\n    \"offset\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "Listar Peças Aprovadas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/pieces?status=approved",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"pieces"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "approved",
+									"description": "Filtrar por status"
+								}
+							]
+						},
+						"description": "Lista apenas as peças aprovadas."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Peças Reprovadas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/pieces?status=rejected",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"pieces"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "rejected",
+									"description": "Filtrar por status"
+								}
+							]
+						},
+						"description": "Lista apenas as peças reprovadas."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Peças com Paginação",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/pieces?limit=10&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"pieces"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Limite de resultados (1-1000)"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Offset para paginação"
+								}
+							]
+						},
+						"description": "Lista peças com paginação (limit e offset)."
+					},
+					"response": []
+				},
+				{
+					"name": "Obter Peça por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/pieces/{{piece_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"pieces",
+								"{{piece_id}}"
+							],
+							"variable": [
+								{
+									"key": "piece_id",
+									"value": "P001",
+									"description": "ID da peça"
+								}
+							]
+						},
+						"description": "Retorna detalhes de uma peça específica pelo ID."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/pieces/P001",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"pieces",
+										"P001"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"P001\",\n    \"peso\": 100.0,\n    \"cor\": \"azul\",\n    \"comprimento\": 15.0,\n    \"status\": \"approved\",\n    \"rejection_reasons\": [],\n    \"box_id\": 1,\n    \"created_at\": \"2024-01-01T12:00:00\"\n}"
+						},
+						{
+							"name": "Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/pieces/INVALID",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"pieces",
+										"INVALID"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"detail\": \"Peça com ID 'INVALID' não encontrada\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Remover Peça",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/pieces/{{piece_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"pieces",
+								"{{piece_id}}"
+							],
+							"variable": [
+								{
+									"key": "piece_id",
+									"value": "P001",
+									"description": "ID da peça a ser removida"
+								}
+							]
+						},
+						"description": "Remove uma peça cadastrada.\n\n- Se reprovada: remove diretamente\n- Se aprovada: remove da caixa e ajusta estado da caixa se necessário"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/pieces/P001",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"pieces",
+										"P001"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Not Found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/pieces/INVALID",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"pieces",
+										"INVALID"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"detail\": \"Peça com ID 'INVALID' não encontrada\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints para gerenciamento de peças"
+		},
+		{
+			"name": "Caixas",
+			"item": [
+				{
+					"name": "Listar Todas as Caixas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/boxes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"boxes"
+							]
+						},
+						"description": "Lista todas as caixas cadastradas."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/boxes",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"boxes"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"items\": [\n        {\n            \"id\": 1,\n            \"status\": \"closed\",\n            \"opened_at\": \"2024-01-01T12:00:00\",\n            \"closed_at\": \"2024-01-01T12:30:00\",\n            \"piece_count\": 10\n        }\n    ],\n    \"total\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Listar Caixas Fechadas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/boxes?status=closed",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"boxes"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "closed",
+									"description": "Filtrar por status (open/closed)"
+								}
+							]
+						},
+						"description": "Lista apenas as caixas fechadas."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Caixas Abertas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/boxes?status=open",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"boxes"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "open",
+									"description": "Filtrar por status (open/closed)"
+								}
+							]
+						},
+						"description": "Lista apenas as caixas abertas."
+					},
+					"response": []
+				},
+				{
+					"name": "Obter Caixa por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/boxes/{{box_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"boxes",
+								"{{box_id}}"
+							],
+							"variable": [
+								{
+									"key": "box_id",
+									"value": "1",
+									"description": "ID da caixa"
+								}
+							]
+						},
+						"description": "Retorna detalhes de uma caixa específica com lista de peças."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/boxes/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"boxes",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"status\": \"closed\",\n    \"opened_at\": \"2024-01-01T12:00:00\",\n    \"closed_at\": \"2024-01-01T12:30:00\",\n    \"piece_count\": 10,\n    \"pieces\": [\n        {\n            \"id\": \"P001\",\n            \"peso\": 100.0,\n            \"cor\": \"azul\",\n            \"comprimento\": 15.0,\n            \"status\": \"approved\",\n            \"rejection_reasons\": [],\n            \"box_id\": 1,\n            \"created_at\": \"2024-01-01T12:00:00\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/boxes/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"boxes",
+										"999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"detail\": \"Caixa com ID '999' não encontrada\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints para gerenciamento de caixas"
+		},
+		{
+			"name": "Relatórios",
+			"item": [
+				{
+					"name": "Gerar Relatório Final",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/reports/final",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reports",
+								"final"
+							]
+						},
+						"description": "Gera relatório final consolidado com estatísticas de produção.\n\nRetorna:\n- Total de peças aprovadas\n- Total de peças reprovadas\n- Contagem de reprovações por motivo\n- Total de caixas fechadas utilizadas"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/reports/final",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reports",
+										"final"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"total_aprovadas\": 25,\n    \"total_reprovadas\": 5,\n    \"motivo_contagem\": [\n        {\n            \"motivo\": \"peso fora da faixa\",\n            \"quantidade\": 2\n        },\n        {\n            \"motivo\": \"cor inválida\",\n            \"quantidade\": 1\n        },\n        {\n            \"motivo\": \"comprimento fora da faixa\",\n            \"quantidade\": 2\n        }\n    ],\n    \"total_caixas\": 3\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints para relatórios e estatísticas"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "piece_id",
+			"value": "P001",
+			"type": "string"
+		},
+		{
+			"key": "box_id",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}
+
