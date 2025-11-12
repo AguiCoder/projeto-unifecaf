@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BoxStatus } from '../types';
 import { boxesService } from '../services/boxesService';
+import { pieceKeys } from './usePieces';
 
 export const boxKeys = {
   all: ['boxes'] as const,
@@ -22,5 +23,20 @@ export const useBox = (id: number) => {
     queryKey: boxKeys.detail(id),
     queryFn: () => boxesService.getById(id),
     enabled: !!id,
+  });
+};
+
+// Hook para deletar caixa
+export const useDeleteBox = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => boxesService.delete(id),
+    onSuccess: () => {
+      // Invalida queries de caixas
+      queryClient.invalidateQueries({ queryKey: boxKeys.lists() });
+      // Invalida queries de peças (pois peças podem ter sido realocadas)
+      queryClient.invalidateQueries({ queryKey: pieceKeys.lists() });
+    },
   });
 };

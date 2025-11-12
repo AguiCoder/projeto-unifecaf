@@ -36,3 +36,37 @@ class BoxListResponse(BaseModel):
     items: List[BoxResponse]
     total: int
 
+
+class ReallocatedPieceInfo(BaseModel):
+    """Informações sobre uma peça realocada"""
+    piece_id: str = Field(..., description="ID da peça realocada")
+    from_box_id: int = Field(..., description="ID da caixa de origem (excluída)")
+    to_box_id: int = Field(..., description="ID da caixa de destino")
+
+
+class BoxDeleteResponse(BaseModel):
+    """Schema de resposta para exclusão de caixa"""
+    message: str = Field(..., description="Mensagem de sucesso")
+    reallocated_pieces: List[ReallocatedPieceInfo] = Field(
+        default_factory=list,
+        description="Lista de peças realocadas"
+    )
+    boxes_created: int = Field(
+        default=0,
+        description="Número de novas caixas criadas durante a realocação"
+    )
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "message": "Caixa excluída com sucesso",
+                "reallocated_pieces": [
+                    {
+                        "piece_id": "P001",
+                        "from_box_id": 1,
+                        "to_box_id": 2
+                    }
+                ],
+                "boxes_created": 1
+            }
+        }

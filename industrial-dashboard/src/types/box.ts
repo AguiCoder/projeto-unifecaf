@@ -21,3 +21,15 @@ export interface BoxListResponse {
   items: Box[];
   total: number;
 }
+
+export interface ReallocatedPieceInfo {
+  piece_id: string;
+  from_box_id: number;
+  to_box_id: number;
+}
+
+export interface BoxDeleteResponse {
+  message: string;
+  reallocated_pieces: ReallocatedPieceInfo[];
+  boxes_created: number;
+}

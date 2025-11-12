@@ -15,6 +15,7 @@ export const endpoints = {
   boxes: {
     list: '/api/v1/boxes',
     detail: (id: number) => `/api/v1/boxes/${id}`,
+    delete: (id: number) => `/api/v1/boxes/${id}`,
   },
   
   // Relatórios
