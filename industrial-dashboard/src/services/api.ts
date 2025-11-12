@@ -82,12 +82,12 @@ export class ApiClient {
     }
   }
 
-  async delete(endpoint: string): Promise<void> {
+  async delete<T>(endpoint: string): Promise<T> {
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'DELETE',
       });
-      await this.handleResponse<void>(response);
+      return this.handleResponse<T>(response);
     } catch (error) {
       if (error instanceof Error) {
         throw error;

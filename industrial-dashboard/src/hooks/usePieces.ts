@@ -52,8 +52,12 @@ export const useDeletePiece = () => {
 
   return useMutation({
     mutationFn: (id: string) => piecesService.delete(id),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Invalida queries de peças
       queryClient.invalidateQueries({ queryKey: pieceKeys.lists() });
+      
+      // Invalida queries de caixas (pois peças podem ser movidas ou caixas reabertas)
+      queryClient.invalidateQueries({ queryKey: ['boxes'] });
     },
   });
 };

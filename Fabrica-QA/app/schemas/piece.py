@@ -56,3 +56,20 @@ class PieceListResponse(BaseModel):
     limit: int
     offset: int
 
+
+class PieceDeleteResponse(BaseModel):
+    """Schema de resposta para remoção de peça"""
+    message: str = Field(..., description="Mensagem de sucesso")
+    moved_pieces: Optional[List[str]] = Field(default=None, description="IDs das peças movidas entre caixas")
+    from_box_id: Optional[int] = Field(default=None, description="ID da caixa de origem (aberta)")
+    to_box_id: Optional[int] = Field(default=None, description="ID da caixa de destino (fechada)")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "message": "Peça removida com sucesso",
+                "moved_pieces": ["P002", "P003"],
+                "from_box_id": 2,
+                "to_box_id": 1
+            }
+        }

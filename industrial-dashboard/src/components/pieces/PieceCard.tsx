@@ -34,12 +34,38 @@ export const PieceCard = ({ piece, onClick }: PieceCardProps) => {
 
   const handleDelete = async () => {
     try {
-      await deletePiece.mutateAsync(piece.id);
-      toast({
-        title: 'Peça removida',
-        description: `A peça ${piece.id} foi removida com sucesso.`,
-      });
+      const response = await deletePiece.mutateAsync(piece.id);
       setShowDeleteDialog(false);
+      
+      // Verifica se houve peças movidas
+      if (response.moved_pieces && response.moved_pieces.length > 0) {
+        toast({
+          title: 'Peça removida',
+          description: (
+            <div>
+              <p className="mb-2">A peça {piece.id} foi removida com sucesso.</p>
+              <p className="font-semibold">
+                {response.moved_pieces.length} peça(s) foram movidas:
+              </p>
+              <ul className="list-disc list-inside mt-1 space-y-1">
+                {response.moved_pieces.map((pieceId) => (
+                  <li key={pieceId} className="text-sm">
+                    {pieceId}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-sm mt-2 text-muted-foreground">
+                Da caixa {response.from_box_id} para a caixa {response.to_box_id}
+              </p>
+            </div>
+          ),
+        });
+      } else {
+        toast({
+          title: 'Peça removida',
+          description: `A peça ${piece.id} foi removida com sucesso.`,
+        });
+      }
     } catch (error) {
       toast({
         title: 'Erro ao remover peça',

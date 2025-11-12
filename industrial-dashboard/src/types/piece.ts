@@ -35,3 +35,10 @@ export interface PieceListResponse {
   limit: number;
   offset: number;
 }
+
+export interface PieceDeleteResponse {
+  message: string;
+  moved_pieces: string[] | null;
+  from_box_id: number | null;
+  to_box_id: number | null;
+}

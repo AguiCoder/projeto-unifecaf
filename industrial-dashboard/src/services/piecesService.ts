@@ -1,4 +1,4 @@
-import { Piece, PieceCreate, PieceListResponse, PieceStatus } from '../types';
+import { Piece, PieceCreate, PieceListResponse, PieceDeleteResponse, PieceStatus } from '../types';
 import { apiClient } from './api';
 import { endpoints } from '../constants/endpoints';
 
@@ -32,7 +32,7 @@ export const piecesService = {
     return apiClient.post<Piece>(endpoints.pieces.create, data);
   },
 
-  delete: async (id: string): Promise<void> => {
-    return apiClient.delete(endpoints.pieces.delete(id));
+  delete: async (id: string): Promise<PieceDeleteResponse> => {
+    return apiClient.delete<PieceDeleteResponse>(endpoints.pieces.delete(id));
   },
 };

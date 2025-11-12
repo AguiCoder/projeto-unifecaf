@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 from app.api.deps import get_db_session
 from app.models.piece import Piece
 from app.models.enums import PieceStatus
-from app.schemas.piece import PieceCreate, PieceResponse, PieceListResponse
+from app.schemas.piece import PieceCreate, PieceResponse, PieceListResponse, PieceDeleteResponse
 from app.services.quality_service import evaluate_piece
 from app.services.boxing_service import find_or_create_open_box, allocate_piece_to_box, remove_piece_from_box
 
@@ -116,16 +116,21 @@ def get_piece(
     return PieceResponse.model_validate(piece)
 
 
-@router.delete("/{piece_id}", status_code=204)
+@router.delete("/{piece_id}", response_model=PieceDeleteResponse, status_code=200)
 def delete_piece(
     piece_id: str,
     session: Session = Depends(get_db_session)
-) -> None:
+) -> PieceDeleteResponse:
     """
     Remove uma peça cadastrada.
     
     - Se reprovada: remove diretamente
     - Se aprovada: remove da caixa e ajusta estado da caixa se necessário
+    - Se removida de caixa fechada e restarem < 10 peças:
+      - Move peças de caixa aberta para a fechada até completar 10
+      - Ou reabre a caixa fechada se não houver caixa aberta
+    
+    Retorna informações sobre peças movidas entre caixas, se aplicável.
     """
     piece = session.get(Piece, piece_id)
     if not piece:
@@ -134,12 +139,23 @@ def delete_piece(
             detail=f"Peça com ID '{piece_id}' não encontrada"
         )
     
-    # Remove da caixa se necessário
-    remove_piece_from_box(session, piece)
+    # Remove da caixa se necessário e obtém informações sobre peças movidas
+    move_info = remove_piece_from_box(session, piece)
     
     # Remove peça
     session.delete(piece)
     session.commit()
     
-    return None
+    # Monta resposta
+    if move_info["moved_pieces"]:
+        message = f"Peça removida com sucesso. {len(move_info['moved_pieces'])} peça(s) foram movidas da caixa {move_info['from_box_id']} para a caixa {move_info['to_box_id']}."
+    else:
+        message = "Peça removida com sucesso."
+    
+    return PieceDeleteResponse(
+        message=message,
+        moved_pieces=move_info["moved_pieces"],
+        from_box_id=move_info["from_box_id"],
+        to_box_id=move_info["to_box_id"]
+    )
 
