@@ -1,8 +1,16 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import get_settings
 from app.db.init_db import init_db
 from app.api.routes import api_router
+
+# Configura logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
@@ -32,7 +40,13 @@ app.include_router(api_router, prefix="/api")
 @app.on_event("startup")
 def on_startup():
     """Inicializa o banco de dados na inicialização da aplicação"""
-    init_db()
+    logger.info("Iniciando aplicação...")
+    try:
+        init_db()
+        logger.info("Aplicação iniciada com sucesso!")
+    except Exception as e:
+        logger.error(f"Erro ao iniciar aplicação: {e}")
+        raise
 
 
 @app.get("/health")
