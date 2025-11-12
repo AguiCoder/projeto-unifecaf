@@ -16,9 +16,9 @@ else:
         echo=False,
         pool_pre_ping=True,  # Verifica conexão antes de usar
         pool_recycle=300,    # Recicla conexões após 5 minutos
-        pool_timeout=10,     # Timeout para obter conexão do pool
+        pool_timeout=5,      # Timeout para obter conexão do pool (reduzido)
         connect_args={
-            "connect_timeout": 10  # Timeout de 10 segundos para conexão inicial
+            "connect_timeout": 5  # Timeout de 5 segundos para conexão inicial (reduzido)
         } if "postgresql" in settings.database_url else {}
     )
 

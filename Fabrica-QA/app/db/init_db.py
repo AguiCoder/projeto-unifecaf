@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 def init_db() -> None:
     """Inicializa o banco de dados criando todas as tabelas com retry logic"""
-    max_retries = 5
-    retry_delay = 2  # segundos
+    max_retries = 3  # Reduzido de 5 para 3 para evitar timeout muito longo
+    retry_delay = 1  # Reduzido de 2 para 1 segundo para ser mais rápido
     
     for attempt in range(max_retries):
         try:
@@ -28,7 +28,11 @@ def init_db() -> None:
                 time.sleep(retry_delay)
             else:
                 logger.error(f"Falha ao inicializar banco de dados após {max_retries} tentativas: {e}")
-                raise
+                # Não levanta exceção para não bloquear o startup - tenta novamente na primeira requisição
+                logger.warning("Aplicação iniciará sem banco inicializado. Tentará novamente na primeira requisição.")
+                return
         except Exception as e:
             logger.error(f"Erro inesperado ao inicializar banco de dados: {e}")
-            raise
+            # Não levanta exceção para não bloquear o startup
+            logger.warning("Aplicação iniciará sem banco inicializado. Tentará novamente na primeira requisição.")
+            return

@@ -35,5 +35,6 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 8080
 
 # Comando para servir arquivos estáticos usando Python http.server
-CMD ["python", "-m", "http.server", "8080", "--directory", "dist"]
+# --bind 0.0.0.0 permite acesso de fora do container (necessário para healthcheck)
+CMD ["python", "-m", "http.server", "8080", "--bind", "0.0.0.0", "--directory", "dist"]
 

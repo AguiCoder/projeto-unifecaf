@@ -37,8 +37,8 @@ services:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 5
+      start_period: 60s  # Aumentado para dar mais tempo para o banco inicializar
     networks:
       - app_network
 
@@ -53,13 +53,14 @@ services:
     expose:
       - "8080"  # Expõe a porta apenas na rede interna
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080')"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 20s
+      retries: 5
+      start_period: 40s  # Aumentado para dar mais tempo para o servidor iniciar
     networks:
       - app_network
 
