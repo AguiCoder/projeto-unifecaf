@@ -149,6 +149,7 @@ export const BoxCard = ({ box, onClick }: BoxCardProps) => {
           )}
         </div>
       </div>
+    </div>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
