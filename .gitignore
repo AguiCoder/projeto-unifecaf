@@ -1,2 +1,10 @@
 industrial-dashboard/.git/
 Fabrica-QA/.git/
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Manter .env.example no repositório (não ignorar)
+!.env.example

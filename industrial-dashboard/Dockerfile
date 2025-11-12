@@ -15,8 +15,9 @@ COPY . .
 
 # Build da aplicação
 # VITE_API_URL será injetado no build time via ARG
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
+# Valor padrão garante que o build não falhe se o ARG não for passado
+ARG VITE_API_URL=https://api-unifecaf.aguicoder.com
+ENV VITE_API_URL=${VITE_API_URL:-https://api-unifecaf.aguicoder.com}
 
 RUN npm run build
 

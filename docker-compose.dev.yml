@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: fabrica_qa_db_dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fabrica_qa
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"  # Expõe porta para acesso local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network_dev
+
+  backend:
+    build:
+      context: ./Fabrica-QA
+      dockerfile: Dockerfile
+    container_name: fabrica_qa_backend_dev
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/fabrica_qa
+      APP_NAME: Fabrica QA
+    ports:
+      - "8000:8000"  # Expõe porta para acesso local
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app_network_dev
+
+  frontend:
+    build:
+      context: ./industrial-dashboard
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000  # URL para desenvolvimento local
+    container_name: fabrica_qa_frontend_dev
+    ports:
+      - "8080:8080"  # Expõe porta para acesso local
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - app_network_dev
+
+networks:
+  app_network_dev:
+    driver: bridge
+
+volumes:
+  postgres_data_dev:
+
