@@ -15,11 +15,15 @@ COPY . .
 
 # Build da aplicação
 # VITE_API_URL será injetado no build time via ARG
-# Valor padrão garante que o build não falhe se o ARG não for passado
-ARG VITE_API_URL=https://api-unifecaf.aguicoder.com
-ENV VITE_API_URL=${VITE_API_URL:-https://api-unifecaf.aguicoder.com}
-
-RUN npm run build
+# Coolify pode injetar ARGs automaticamente, então precisamos tratar valores vazios
+ARG VITE_API_URL
+# Força valor padrão se ARG estiver vazio, não definido ou contiver apenas espaços
+RUN if [ -z "${VITE_API_URL}" ] || [ "${VITE_API_URL}" = "" ]; then \
+        export VITE_API_URL="https://api-unifecaf.aguicoder.com"; \
+    fi && \
+    echo "Building with VITE_API_URL=${VITE_API_URL}" && \
+    export VITE_API_URL="${VITE_API_URL}" && \
+    npm run build
 
 # Stage 2: Serve static files
 FROM python:3.12-slim
